@@ -3,27 +3,25 @@ import json
 
 def main(data, json_filename):    
 
-    players = data['player'].unique().tolist()
+    players = data['new_id'].unique().tolist()
 
     players_dict = {}
 
     for player in players:
 
-        teams = data[data['player'] == player][['team','year']].values.tolist()
+        teams = data[data['new_id'] == player][['team','year']].values.tolist()
         teams_and_teammates = []
 
         for team in teams:
-            teams_and_teammates.append(data[(data['player'] != player) & 
+            teams_and_teammates.append(data[(data['new_id'] != player) & 
                                 (data['team'] == team[0]) &
                                 (data['year'] == team[1])].values.tolist())
 
         player_dict = {}
         for team in teams_and_teammates:
             for teammate in team:
-                if teammate[0] not in player_dict.keys():
-                    player_dict[teammate[0]] = [[teammate[2], teammate[3]]]
-                else:
-                    player_dict[teammate[0]].append([teammate[2], teammate[3]])
+                if teammate[5] not in player_dict.keys():
+                    player_dict[teammate[5]] = [[teammate[3], teammate[4]]]
         
         players_dict[player] = player_dict
 

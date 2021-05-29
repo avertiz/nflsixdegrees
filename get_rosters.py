@@ -7,6 +7,7 @@ def main(YEARS_START, YEARS_END):
     TEAMS = ['arz' , 'atl', 'bal', 'buf', 'car', 'chi', 'cin', 'cle', 'dal', 'den', 'det', 'gb', 'hou', 'ind', 'jac', 'kc', 'lac', 'lam', 'mia', 'min', 'ne', 'no', 'nyg', 'nyj', 'oak', 'phi', 'pit', 'sf', 'sea', 'tb', 'ten', 'was',
     'stl', 'bos', 'pho']
 
+    id = []
     positions = []
     players = []
     team_list_placeholder = []
@@ -27,6 +28,7 @@ def main(YEARS_START, YEARS_END):
                 for row in rows:
                     cols = row.find_all('td')
                     if cols:
+                        id.append(cols[3].find_all('a')[0]['href'][-8:])
                         positions.append(cols[0].string)
                         players.append(cols[3].string)
                         team_list_placeholder.append(team)
@@ -34,12 +36,13 @@ def main(YEARS_START, YEARS_END):
             except:
                 print("Unable to get ", team, year)
 
-    data = [players, positions, team_list_placeholder, year_list_placeholder]
+    data = [id, players, positions, team_list_placeholder, year_list_placeholder]
     file = open("pos_player.csv","w+", newline='')
     with file:
         write = csv.writer(file)
+        write.writerow(['id', 'player', 'pos', 'team', 'year'])
         for row in range(len(data[0])):
-            text_ = [data[0][row], data[1][row], data[2][row], data[3][row]]
+            text_ = [data[0][row], data[1][row], data[2][row], data[3][row], data[4][row]]
             write.writerow(text_)
 
 if __name__ == '__main__':
