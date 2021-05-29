@@ -1,4 +1,5 @@
 import json
+import pandas as pd
 
 class Bfs:
     def __init__(self, tree_filepath, player_index_filepath, team_index_filepath):
@@ -12,7 +13,7 @@ class Bfs:
         self.team_index = json.load(file3)
         file3.close()
         self.path = []
-        self.pretty_list = []
+        self.output_table = pd.DataFrame()
         self.start_player = ''
         self.start_player_id = ''
         self.target_player = ''
@@ -46,10 +47,10 @@ class Bfs:
         return(self)
 
     def bfs(self):  
-        queue = []        
+        queue = []    
         queue.append([self.start_player_id])
-        while queue:            
-            path = queue.pop(0)            
+        while queue:
+            path = queue.pop(0)
             node = path[-1]            
             if node == self.target_player_id:
                 self.path = path
@@ -66,22 +67,17 @@ class Bfs:
     def pretty_return(self, start_player, target_player):
         self.start_player = start_player
         self.target_player = target_player
+        self.path = []
         self.player_to_index()
         self.bfs()
-        pretty_list = []
+        table = pd.DataFrame(columns = ['player', 'team', 'teammate'])
         for player in range(len(self.path)):
             if self.path[player] == self.path[-1]:
-                self.pretty_list = pretty_list
+                self.output_table = table
                 return(self)
             else:
                 player_name = self.get_full_player_name( self.path[player] )
-                team = self.get_full_team_name( self.data[self.path[player]][self.path[player + 1]][0][0] )
-                year = self.data[self.path[player]][self.path[player + 1]][0][1]
+                team = str( self.data[self.path[player]][self.path[player + 1]][0][1] ) +' '+ str( self.get_full_team_name( self.data[self.path[player]][self.path[player + 1]][0][0] ) )
                 teammate = self.get_full_player_name( self.path[player + 1] )
 
-                pretty_list.append(
-                    [   player_name,
-                        [team, year],
-                        teammate
-                    ]
-                )
+                table = table.append({'player': player_name, 'team': team, 'teammate':teammate}, ignore_index = True)
